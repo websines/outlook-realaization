@@ -37,10 +37,18 @@ const useStyles = makeStyles({
     minHeight: '100vh',
     backgroundColor: tokens.colorNeutralBackground2,
     padding: tokens.spacingVerticalM,
+    '@media (min-width: 450px)': {
+      padding: tokens.spacingVerticalXXL,
+      backgroundColor: '#f5f5f5',
+    },
   },
   container: {
     width: '100%',
     maxWidth: '100%',
+    '@media (min-width: 450px)': {
+      maxWidth: '500px',
+      margin: '0 auto',
+    },
   },
   header: {
     display: 'flex',
@@ -49,34 +57,76 @@ const useStyles = makeStyles({
     marginBottom: tokens.spacingVerticalM,
     paddingBottom: tokens.spacingVerticalS,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    '@media (min-width: 450px)': {
+      marginBottom: tokens.spacingVerticalXL,
+      paddingBottom: tokens.spacingVerticalM,
+    },
   },
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
     gap: tokens.spacingHorizontalS,
+    '@media (min-width: 450px)': {
+      gap: tokens.spacingHorizontalM,
+    },
   },
   headerIcon: {
     fontSize: '20px',
     color: tokens.colorBrandForeground1,
+    '@media (min-width: 450px)': {
+      fontSize: '28px',
+    },
+  },
+  headerTitle: {
+    '@media (min-width: 450px)': {
+      fontSize: tokens.fontSizeBase500,
+    },
+  },
+  headerSubtitle: {
+    display: 'none',
+    '@media (min-width: 450px)': {
+      display: 'block',
+      color: tokens.colorNeutralForeground3,
+      fontSize: tokens.fontSizeBase200,
+    },
   },
   headerRight: {
     display: 'flex',
     alignItems: 'center',
     gap: tokens.spacingHorizontalXS,
+    '@media (min-width: 450px)': {
+      gap: tokens.spacingHorizontalS,
+    },
   },
   section: {
     marginBottom: tokens.spacingVerticalM,
+    '@media (min-width: 450px)': {
+      marginBottom: tokens.spacingVerticalL,
+      padding: tokens.spacingHorizontalM,
+      backgroundColor: tokens.colorNeutralBackground1,
+      borderRadius: tokens.borderRadiusMedium,
+      boxShadow: tokens.shadow2,
+    },
   },
   sectionTitle: {
     fontSize: tokens.fontSizeBase300,
     fontWeight: tokens.fontWeightSemibold,
     marginBottom: tokens.spacingVerticalS,
     color: tokens.colorNeutralForeground1,
+    '@media (min-width: 450px)': {
+      fontSize: tokens.fontSizeBase400,
+      marginBottom: tokens.spacingVerticalM,
+    },
   },
   card: {
     marginBottom: tokens.spacingVerticalS,
     boxShadow: tokens.shadow2,
     borderRadius: tokens.borderRadiusMedium,
+    '@media (min-width: 450px)': {
+      marginBottom: tokens.spacingVerticalM,
+      boxShadow: tokens.shadow4,
+      borderRadius: tokens.borderRadiusLarge,
+    },
   },
   cardContent: {
     padding: tokens.spacingHorizontalM,
@@ -84,11 +134,18 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalS,
+    '@media (min-width: 450px)': {
+      padding: tokens.spacingHorizontalL,
+      gap: tokens.spacingVerticalM,
+    },
   },
   options: {
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalS,
+    '@media (min-width: 450px)': {
+      gap: tokens.spacingVerticalM,
+    },
   },
   actions: {
     display: 'flex',
@@ -104,6 +161,10 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
     marginBottom: tokens.spacingVerticalM,
     boxShadow: tokens.shadow2,
+    '@media (min-width: 450px)': {
+      padding: tokens.spacingHorizontalM,
+      marginBottom: tokens.spacingVerticalL,
+    },
   },
   userInfo: {
     display: 'flex',
@@ -112,6 +173,9 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     flex: 1,
     minWidth: 0,
+    '@media (min-width: 450px)': {
+      gap: tokens.spacingHorizontalS,
+    },
   },
   userText: {
     overflow: 'hidden',
@@ -138,6 +202,11 @@ const useStyles = makeStyles({
     padding: `2px ${tokens.spacingHorizontalXS}`,
     borderRadius: tokens.borderRadiusMedium,
     flexShrink: 0,
+    '@media (min-width: 450px)': {
+      fontSize: tokens.fontSizeBase200,
+      padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalS}`,
+      gap: tokens.spacingHorizontalXS,
+    },
   },
   llmConfigured: {
     color: tokens.colorPaletteGreenForeground1,
@@ -150,23 +219,32 @@ const useStyles = makeStyles({
   generateButton: {
     width: '100%',
     height: '40px',
+    '@media (min-width: 450px)': {
+      height: '44px',
+      fontSize: tokens.fontSizeBase400,
+      marginTop: tokens.spacingVerticalS,
+    },
   },
   welcomeCard: {
     textAlign: 'center',
     padding: tokens.spacingVerticalL,
+    '@media (min-width: 450px)': {
+      padding: tokens.spacingVerticalXXL,
+    },
   },
   welcomeIcon: {
     fontSize: '36px',
     color: tokens.colorBrandForeground1,
     marginBottom: tokens.spacingVerticalS,
+    '@media (min-width: 450px)': {
+      fontSize: '48px',
+      marginBottom: tokens.spacingVerticalM,
+    },
   },
   hint: {
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXS,
-  },
-  compactField: {
-    marginBottom: tokens.spacingVerticalXS,
   },
 });
 
@@ -285,7 +363,10 @@ export const App: React.FC = () => {
           <div className={styles.header}>
             <div className={styles.headerLeft}>
               <CalendarMonth24Regular className={styles.headerIcon} />
-              <Text weight="semibold" size={400}>Calendar Report</Text>
+              <div>
+                <Text weight="semibold" size={400} className={styles.headerTitle}>Calendar Report</Text>
+                <Text className={styles.headerSubtitle}>Generate meeting reports with AI</Text>
+              </div>
             </div>
             <div className={styles.headerRight}>
               <SettingsPanel onSave={handleSettingsSaved} />
@@ -294,7 +375,6 @@ export const App: React.FC = () => {
                   appearance="subtle"
                   icon={<SignOut24Regular />}
                   onClick={handleLogout}
-                  size="small"
                   aria-label="Sign out"
                 />
               )}
@@ -306,14 +386,15 @@ export const App: React.FC = () => {
             <Card className={styles.card}>
               <div className={styles.welcomeCard}>
                 <CalendarMonth24Regular className={styles.welcomeIcon} />
-                <Text weight="semibold" size={400} block>Welcome</Text>
-                <Text size={200} style={{ display: 'block', marginTop: 4, marginBottom: 16, color: '#666' }}>
-                  Generate meeting reports with AI analysis
+                <Text weight="semibold" size={500} block>Welcome to Calendar Report</Text>
+                <Text size={300} style={{ display: 'block', marginTop: 8, marginBottom: 20, color: '#666' }}>
+                  Generate detailed meeting reports from your Outlook calendar with AI-powered analysis
                 </Text>
                 <Button
                   appearance="primary"
                   icon={<Person24Regular />}
                   onClick={handleLogin}
+                  size="large"
                 >
                   Sign in with Microsoft
                 </Button>
@@ -334,8 +415,8 @@ export const App: React.FC = () => {
                   </div>
                 </div>
                 <div className={`${styles.llmStatus} ${llmReady ? styles.llmConfigured : styles.llmNotConfigured}`}>
-                  <BrainCircuit24Regular style={{ fontSize: '14px' }} />
-                  <span>{llmReady ? 'AI' : 'Off'}</span>
+                  <BrainCircuit24Regular style={{ fontSize: '16px' }} />
+                  <span>{llmReady ? 'AI Ready' : 'AI Off'}</span>
                 </div>
               </div>
 

@@ -10,20 +10,22 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalS,
+    '@media (min-width: 450px)': {
+      flexDirection: 'row',
+      gap: tokens.spacingHorizontalM,
+    },
   },
-  row: {
+  field: {
     display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalS,
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalXS,
+    '@media (min-width: 450px)': {
+      flex: 1,
+    },
   },
   label: {
-    width: '50px',
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground3,
-    flexShrink: 0,
-  },
-  input: {
-    flex: 1,
   },
 });
 
@@ -46,26 +48,22 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.row}>
-        <span className={styles.label}>From</span>
+      <div className={styles.field}>
+        <span className={styles.label}>Start Date</span>
         <Input
           type="date"
           value={startDate}
           onChange={(e) => onStartDateChange(e.target.value)}
           disabled={disabled}
-          size="small"
-          className={styles.input}
         />
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>To</span>
+      <div className={styles.field}>
+        <span className={styles.label}>End Date</span>
         <Input
           type="date"
           value={endDate}
           onChange={(e) => onEndDateChange(e.target.value)}
           disabled={disabled}
-          size="small"
-          className={styles.input}
         />
       </div>
     </div>

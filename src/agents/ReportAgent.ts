@@ -219,8 +219,18 @@ export class ReportAgent extends BaseAgent {
         XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
       }
 
-      // Trigger download
-      XLSX.writeFile(workbook, filename);
+      // Trigger download - use blob approach for Office Add-in compatibility
+      const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
 
       return {
         success: true,
