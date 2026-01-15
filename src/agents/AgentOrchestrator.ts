@@ -167,11 +167,11 @@ export class AgentOrchestrator {
 
       this.emit('complete', 'Report generated successfully!');
 
-      const reportData = reportResult.data as { filename?: string; downloadUrl?: string };
+      const reportData = reportResult.data as { downloadFilename?: string; downloadUrl?: string };
       return {
         success: true,
         message: `Report generated with ${meetings.length} meetings`,
-        filename: reportData?.filename,
+        filename: reportData?.downloadFilename,
         downloadUrl: reportData?.downloadUrl,
       };
     } catch (error) {
