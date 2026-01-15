@@ -96,6 +96,37 @@ export class ReportAgent extends BaseAgent {
     this.downloadCallback = callback;
   }
 
+  /**
+   * Direct method to generate report - bypasses LLM entirely
+   */
+  async generateReportDirect(options: { includeAnalysis: boolean; includeExecutiveSummary: boolean }): Promise<{
+    success: boolean;
+    filename?: string;
+    downloadUrl?: string;
+    error?: string;
+  }> {
+    // Get the tool handler and call it directly
+    const toolHandler = this.toolHandlers.get('generate_excel_report');
+    if (!toolHandler) {
+      return { success: false, error: 'Tool not found' };
+    }
+
+    try {
+      this.emit('thinking', 'Generating Excel report...');
+      const result = await toolHandler({
+        include_analysis: options.includeAnalysis ? 'true' : 'false',
+        include_executive_summary: options.includeExecutiveSummary ? 'true' : 'false',
+      }) as { success: boolean; filename?: string; downloadUrl?: string; error?: string };
+
+      this.emit('complete', 'Report generation completed');
+      return result;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.emit('error', errorMsg);
+      return { success: false, error: errorMsg };
+    }
+  }
+
   private getMeetings(): GraphCalendarEvent[] {
     return (this.context.meetings as GraphCalendarEvent[]) || [];
   }

@@ -159,15 +159,17 @@ export class AgentOrchestrator {
         this.emit('response', 'LLM not configured - skipping AI analysis');
       }
 
-      // Step 3: Generate report
+      // Step 3: Generate report - call directly, don't rely on LLM
       this.emit('thinking', 'Generating Excel report...');
 
       // Share all context with report agent
       this.reportAgent.setContext(this.sharedContext);
 
-      const reportResult = await this.reportAgent.run(
-        `Generate an Excel report with include_analysis=${includeAnalysis} and include_executive_summary=${includeExecutiveSummary}`
-      );
+      // Call the direct method that bypasses LLM
+      const reportResult = await this.reportAgent.generateReportDirect({
+        includeAnalysis: includeAnalysis && isLLMConfigured(),
+        includeExecutiveSummary: includeExecutiveSummary && isLLMConfigured(),
+      });
 
       if (!reportResult.success) {
         throw new Error(reportResult.error || 'Failed to generate report');
@@ -175,18 +177,13 @@ export class AgentOrchestrator {
 
       this.emit('complete', 'Report generated successfully!');
 
-      // Debug: log what we're getting back
-      console.log('Report result data:', reportResult.data);
-
-      const reportData = reportResult.data as { downloadFilename?: string; downloadUrl?: string };
-      console.log('Download URL:', reportData?.downloadUrl);
-      console.log('Download filename:', reportData?.downloadFilename);
+      console.log('Direct report result:', reportResult);
 
       return {
         success: true,
         message: `Report generated with ${meetings.length} meetings`,
-        filename: reportData?.downloadFilename,
-        downloadUrl: reportData?.downloadUrl,
+        filename: reportResult.filename,
+        downloadUrl: reportResult.downloadUrl,
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
