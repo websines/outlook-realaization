@@ -248,12 +248,15 @@ export class ReportAgent extends BaseAgent {
       }
 
       // Store blob URL globally for manual download fallback
+      console.log('ReportAgent: Setting download info, blobUrl length:', blobUrl.length);
       lastReportDownload = { url: blobUrl, filename };
       this.context.downloadUrl = blobUrl;
       this.context.downloadFilename = filename;
 
       // Call the download callback if set
+      console.log('ReportAgent: downloadCallback exists?', !!this.downloadCallback);
       if (this.downloadCallback) {
+        console.log('ReportAgent: Calling downloadCallback');
         this.downloadCallback(blobUrl, filename);
       }
 
