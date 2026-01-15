@@ -153,9 +153,8 @@ export class AnalysisAgent extends BaseAgent {
     });
 
     // Analyze all meetings
-    this.registerTool('analyze_all_meetings', async (args) => {
+    this.registerTool('analyze_all_meetings', async (_args) => {
       const meetings = this.getMeetings();
-      const batchSize = parseInt(args.batch_size as string) || 10;
 
       if (meetings.length === 0) {
         return {

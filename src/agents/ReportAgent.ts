@@ -2,7 +2,7 @@ import { BaseAgent } from './BaseAgent';
 import type { AgentConfig, Tool } from '../types/AgentTypes';
 import type { GraphCalendarEvent, MeetingReportRow } from '../types/CalendarEvent';
 import type { MeetingAnalysis } from '../types/LLMTypes';
-import { transformEventsToReportRows, generateExcelFile, generateFilename } from '../services/excelService';
+import { transformEventsToReportRows, generateFilename } from '../services/excelService';
 import { extractCompanyFromEmail } from '../utils/domainExtractor';
 
 const REPORT_TOOLS: Tool[] = [

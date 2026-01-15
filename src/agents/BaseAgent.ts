@@ -6,7 +6,6 @@ import type {
   AgentEvent,
   AgentEventHandler,
   Tool,
-  ToolCall,
 } from '../types/AgentTypes';
 import { getLLMConfig } from '../services/llmService';
 
