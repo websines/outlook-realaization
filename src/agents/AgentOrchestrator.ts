@@ -90,6 +90,7 @@ export class AgentOrchestrator {
     success: boolean;
     message: string;
     filename?: string;
+    downloadUrl?: string;
     error?: string;
   }> {
     const { startDate, endDate, targetUser, includeAnalysis = true, includeExecutiveSummary = true } = options;
@@ -166,10 +167,12 @@ export class AgentOrchestrator {
 
       this.emit('complete', 'Report generated successfully!');
 
+      const reportData = reportResult.data as { filename?: string; downloadUrl?: string };
       return {
         success: true,
         message: `Report generated with ${meetings.length} meetings`,
-        filename: (reportResult.data as { filename?: string })?.filename,
+        filename: reportData?.filename,
+        downloadUrl: reportData?.downloadUrl,
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

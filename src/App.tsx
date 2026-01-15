@@ -275,6 +275,8 @@ export const App: React.FC = () => {
   const [events, setEvents] = useState<AgentEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [downloadFilename, setDownloadFilename] = useState<string | null>(null);
   const [, setLlmConfigured] = useState(isLLMConfigured());
   const [availableUsers, setAvailableUsers] = useState<{ name: string; email: string }[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -316,6 +318,8 @@ export const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
+    setDownloadUrl(null);
+    setDownloadFilename(null);
     setEvents([]);
 
     try {
@@ -329,13 +333,18 @@ export const App: React.FC = () => {
       const result = await orchestrator.generateReport({
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        targetUser: targetUser.trim() || undefined, // Pass target user if provided
+        targetUser: targetUser.trim() || undefined,
         includeAnalysis: includeAnalysis && isLLMConfigured(),
         includeExecutiveSummary: includeExecutiveSummary && isLLMConfigured(),
       });
 
       if (result.success) {
-        setSuccess(`Report generated successfully! File: ${result.filename || 'meeting-report.xlsx'}`);
+        const fname = result.filename || 'meeting-report.xlsx';
+        setSuccess(`Report generated successfully!`);
+        if (result.downloadUrl) {
+          setDownloadUrl(result.downloadUrl);
+          setDownloadFilename(fname);
+        }
       } else {
         setError(result.error || 'Failed to generate report');
       }
@@ -511,6 +520,19 @@ export const App: React.FC = () => {
                 <MessageBar intent="success" style={{ marginTop: tokens.spacingVerticalS }}>
                   <MessageBarBody>
                     <Text size={200}>{success}</Text>
+                    {downloadUrl && (
+                      <Button
+                        as="a"
+                        href={downloadUrl}
+                        download={downloadFilename || 'meeting-report.xlsx'}
+                        appearance="primary"
+                        icon={<ArrowDownload24Regular />}
+                        size="small"
+                        style={{ marginLeft: tokens.spacingHorizontalM, marginTop: tokens.spacingVerticalXS }}
+                      >
+                        Download Report
+                      </Button>
+                    )}
                   </MessageBarBody>
                 </MessageBar>
               )}

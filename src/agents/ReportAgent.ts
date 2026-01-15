@@ -219,25 +219,38 @@ export class ReportAgent extends BaseAgent {
         XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
       }
 
-      // Trigger download - use blob approach for Office Add-in compatibility
+      // Generate blob for download
       const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = URL.createObjectURL(blob);
+      const blobUrl = URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      // Try automatic download
+      let downloadSucceeded = false;
+      try {
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        downloadSucceeded = true;
+      } catch (e) {
+        console.error('Auto-download failed:', e);
+      }
+
+      // Store blob URL in context for manual download fallback
+      this.context.downloadUrl = blobUrl;
+      this.context.downloadFilename = filename;
 
       return {
         success: true,
         filename,
+        downloadUrl: blobUrl,
         rowCount: this.reportData.length,
         columnsIncluded: headers.length,
         sheetsIncluded: includeExecSummary && execSummary ? 2 : 1,
+        autoDownload: downloadSucceeded,
       };
     });
 
