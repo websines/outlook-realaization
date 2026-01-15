@@ -78,6 +78,7 @@ interface EnhancedReportRow extends MeetingReportRow {
 
 export class ReportAgent extends BaseAgent {
   private reportData: EnhancedReportRow[] = [];
+  private downloadCallback?: (url: string, filename: string) => void;
 
   constructor() {
     const config: AgentConfig = {
@@ -89,6 +90,10 @@ export class ReportAgent extends BaseAgent {
     };
     super(config);
     this.registerTools();
+  }
+
+  setDownloadCallback(callback: (url: string, filename: string) => void): void {
+    this.downloadCallback = callback;
   }
 
   private getMeetings(): GraphCalendarEvent[] {
@@ -246,6 +251,11 @@ export class ReportAgent extends BaseAgent {
       lastReportDownload = { url: blobUrl, filename };
       this.context.downloadUrl = blobUrl;
       this.context.downloadFilename = filename;
+
+      // Call the download callback if set
+      if (this.downloadCallback) {
+        this.downloadCallback(blobUrl, filename);
+      }
 
       return {
         success: true,

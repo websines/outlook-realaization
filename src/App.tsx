@@ -328,6 +328,11 @@ export const App: React.FC = () => {
         onEvent: (event) => {
           setEvents((prev) => [...prev, event]);
         },
+        onDownloadReady: (url, filename) => {
+          console.log('Download ready callback:', url, filename);
+          setDownloadUrl(url);
+          setDownloadFilename(filename);
+        },
       });
 
       const result = await orchestrator.generateReport({

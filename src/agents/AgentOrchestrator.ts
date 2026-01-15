@@ -8,6 +8,7 @@ import { isLLMConfigured } from '../services/llmService';
 export interface OrchestratorOptions {
   msalInstance: IPublicClientApplication;
   onEvent?: AgentEventHandler;
+  onDownloadReady?: (url: string, filename: string) => void;
 }
 
 export interface ReportGenerationOptions {
@@ -29,16 +30,23 @@ export class AgentOrchestrator {
   private msalInstance: IPublicClientApplication;
   private eventHandlers: AgentEventHandler[];
   private sharedContext: AgentContext;
+  private onDownloadReady?: (url: string, filename: string) => void;
 
   constructor(options: OrchestratorOptions) {
     this.msalInstance = options.msalInstance;
     this.eventHandlers = [];
     this.sharedContext = {};
+    this.onDownloadReady = options.onDownloadReady;
 
     // Initialize agents
     this.calendarAgent = new CalendarAgent();
     this.analysisAgent = new AnalysisAgent();
     this.reportAgent = new ReportAgent();
+
+    // Pass download callback to report agent
+    if (this.onDownloadReady) {
+      this.reportAgent.setDownloadCallback(this.onDownloadReady);
+    }
 
     // Set MSAL instance for calendar agent
     this.calendarAgent.setMsalInstance(this.msalInstance);
