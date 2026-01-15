@@ -125,6 +125,6 @@
   ],
   "webApplicationInfo": {
     "id": "YOUR_CLIENT_ID",
-    "resource": "api://localhost:3000/YOUR_CLIENT_ID"
+    "resource": "api://outlook-realaization.vercel.app/YOUR_CLIENT_ID"
   }
 }
