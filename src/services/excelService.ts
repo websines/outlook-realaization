@@ -23,11 +23,21 @@ function formatTime(isoString: string): string {
 }
 
 /**
+ * Check if event has zero duration (start time equals end time)
+ */
+function hasZeroDuration(event: GraphCalendarEvent): boolean {
+  const startTime = new Date(event.start.dateTime).getTime();
+  const endTime = new Date(event.end.dateTime).getTime();
+  return startTime === endTime;
+}
+
+/**
  * Transform Graph API calendar events to report rows
  */
 export function transformEventsToReportRows(events: GraphCalendarEvent[]): MeetingReportRow[] {
   return events
     .filter((event) => !event.isCancelled) // Skip cancelled meetings
+    .filter((event) => !hasZeroDuration(event)) // Skip events with same start/end time (e.g., "Home" placeholders)
     .map((event) => {
       const attendeeNames = event.attendees
         .map((a) => a.emailAddress.name)

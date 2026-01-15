@@ -1,7 +1,7 @@
 import { BaseAgent } from './BaseAgent';
 import type { AgentConfig, Tool } from '../types/AgentTypes';
 import type { GraphCalendarEvent } from '../types/CalendarEvent';
-import { fetchCalendarEvents } from '../services/graphService';
+import { fetchCalendarEvents, getUserTimezone } from '../services/graphService';
 import type { IPublicClientApplication } from '@azure/msal-browser';
 
 const CALENDAR_TOOLS: Tool[] = [
@@ -75,6 +75,7 @@ export class CalendarAgent extends BaseAgent {
   private msalInstance: IPublicClientApplication | null = null;
   private meetings: GraphCalendarEvent[] = [];
   private userDomain: string = '';
+  private userTimezone: string = 'UTC';
 
   constructor() {
     const config: AgentConfig = {
@@ -122,10 +123,26 @@ export class CalendarAgent extends BaseAgent {
       // Set end date to end of day
       endDate.setHours(23, 59, 59, 999);
 
+      // Fetch user's timezone from Outlook settings
+      this.userTimezone = await getUserTimezone(this.msalInstance);
+      this.emit('thinking', `Using timezone: ${this.userTimezone}`);
+
       const userInfo = targetUser ? `for ${targetUser}` : 'for yourself';
       this.emit('thinking', `Fetching calendar events ${userInfo} from ${startDate.toDateString()} to ${endDate.toDateString()}...`);
 
-      this.meetings = await fetchCalendarEvents(this.msalInstance, startDate, endDate, targetUser);
+      const rawMeetings = await fetchCalendarEvents(this.msalInstance, startDate, endDate, targetUser, this.userTimezone);
+
+      // Filter out events with same start/end time (e.g., "Home" placeholders, zero-duration events)
+      this.meetings = rawMeetings.filter((m) => {
+        const startTime = new Date(m.start.dateTime).getTime();
+        const endTime = new Date(m.end.dateTime).getTime();
+        return startTime !== endTime;
+      });
+
+      const filteredCount = rawMeetings.length - this.meetings.length;
+      if (filteredCount > 0) {
+        this.emit('thinking', `Filtered out ${filteredCount} zero-duration events`);
+      }
 
       // Store in context for other agents
       this.context.meetings = this.meetings;

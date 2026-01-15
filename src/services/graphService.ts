@@ -35,12 +35,14 @@ async function getAccessToken(msalInstance: IPublicClientApplication): Promise<s
  * Fetch calendar events from Microsoft Graph API
  * Uses calendarView endpoint to get events within a date range
  * @param targetUser - Optional user email to fetch calendar for (requires shared calendar access)
+ * @param timezone - Optional timezone for event times (defaults to UTC, use getUserTimezone() to get user's preference)
  */
 export async function fetchCalendarEvents(
   msalInstance: IPublicClientApplication,
   startDate: Date,
   endDate: Date,
-  targetUser?: string
+  targetUser?: string,
+  timezone: string = 'UTC'
 ): Promise<GraphCalendarEvent[]> {
   const accessToken = await getAccessToken(msalInstance);
 
@@ -61,7 +63,7 @@ export async function fetchCalendarEvents(
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-        Prefer: 'outlook.timezone="UTC"',
+        Prefer: `outlook.timezone="${timezone}"`,
       },
     });
 
@@ -97,6 +99,28 @@ export async function getUserProfile(msalInstance: IPublicClientApplication): Pr
   }
 
   return response.json();
+}
+
+/**
+ * Get user's default timezone from Outlook mailbox settings
+ * Returns the IANA timezone string (e.g., "Asia/Kolkata", "America/New_York")
+ */
+export async function getUserTimezone(msalInstance: IPublicClientApplication): Promise<string> {
+  const accessToken = await getAccessToken(msalInstance);
+
+  const response = await fetch(`${GRAPH_BASE_URL}/me/mailboxSettings`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.warn(`Failed to fetch mailbox settings: ${response.status}, defaulting to UTC`);
+    return 'UTC';
+  }
+
+  const data = await response.json();
+  return data.timeZone || 'UTC';
 }
 
 /**
