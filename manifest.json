@@ -1,0 +1,130 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/vDevPreview/MicrosoftTeams.schema.json",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "version": "1.0.0",
+  "manifestVersion": "devPreview",
+  "name": {
+    "short": "Calendar Report",
+    "full": "Outlook Calendar Report Generator"
+  },
+  "description": {
+    "short": "Generate meeting reports from your calendar",
+    "full": "An Outlook Add-in that generates detailed meeting reports as downloadable Excel files. Uses AI to analyze meetings, extract action items, and generate executive summaries."
+  },
+  "developer": {
+    "name": "Subhankar",
+    "websiteUrl": "https://localhost:3000",
+    "privacyUrl": "https://localhost:3000/privacy",
+    "termsOfUseUrl": "https://localhost:3000/terms"
+  },
+  "icons": {
+    "outline": "assets/icon-outline.png",
+    "color": "assets/icon-color.png"
+  },
+  "accentColor": "#0078D4",
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": []
+    }
+  },
+  "extensions": [
+    {
+      "requirements": {
+        "scopes": ["mail"],
+        "capabilities": [
+          {
+            "name": "Mailbox",
+            "minVersion": "1.13"
+          }
+        ]
+      },
+      "runtimes": [
+        {
+          "requirements": {
+            "capabilities": [
+              {
+                "name": "Mailbox",
+                "minVersion": "1.13"
+              }
+            ]
+          },
+          "id": "TaskPaneRuntime",
+          "type": "general",
+          "code": {
+            "page": "https://localhost:3000/index.html"
+          },
+          "lifetime": "short",
+          "actions": [
+            {
+              "id": "TaskPaneRuntimeShow",
+              "type": "openPage",
+              "pinnable": true,
+              "view": "dashboard",
+              "supportsNoItemContext": true
+            }
+          ]
+        }
+      ],
+      "ribbons": [
+        {
+          "contexts": ["mailRead", "mailCompose", "default"],
+          "tabs": [
+            {
+              "builtInTabId": "TabDefault",
+              "groups": [
+                {
+                  "id": "CalendarReportGroup",
+                  "label": "Calendar Report",
+                  "icons": [
+                    {
+                      "size": 16,
+                      "url": "https://localhost:3000/assets/icon-16.png"
+                    },
+                    {
+                      "size": 32,
+                      "url": "https://localhost:3000/assets/icon-32.png"
+                    },
+                    {
+                      "size": 80,
+                      "url": "https://localhost:3000/assets/icon-80.png"
+                    }
+                  ],
+                  "controls": [
+                    {
+                      "id": "OpenTaskPane",
+                      "type": "button",
+                      "label": "Calendar Report",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "url": "https://localhost:3000/assets/icon-16.png"
+                        },
+                        {
+                          "size": 32,
+                          "url": "https://localhost:3000/assets/icon-32.png"
+                        },
+                        {
+                          "size": 80,
+                          "url": "https://localhost:3000/assets/icon-80.png"
+                        }
+                      ],
+                      "supertip": {
+                        "title": "Generate Calendar Report",
+                        "description": "Open the Calendar Report tool to generate meeting reports"
+                      },
+                      "actionId": "TaskPaneRuntimeShow"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "webApplicationInfo": {
+    "id": "YOUR_CLIENT_ID",
+    "resource": "api://localhost:3000/YOUR_CLIENT_ID"
+  }
+}
