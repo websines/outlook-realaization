@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Field,
   Input,
   makeStyles,
   tokens,
@@ -9,11 +8,22 @@ import {
 const useStyles = makeStyles({
   container: {
     display: 'flex',
-    gap: tokens.spacingHorizontalM,
-    flexWrap: 'wrap',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalS,
   },
-  field: {
-    minWidth: '140px',
+  row: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalS,
+  },
+  label: {
+    width: '50px',
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground3,
+    flexShrink: 0,
+  },
+  input: {
+    flex: 1,
   },
 });
 
@@ -36,22 +46,28 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
   return (
     <div className={styles.container}>
-      <Field label="Start Date" className={styles.field}>
+      <div className={styles.row}>
+        <span className={styles.label}>From</span>
         <Input
           type="date"
           value={startDate}
           onChange={(e) => onStartDateChange(e.target.value)}
           disabled={disabled}
+          size="small"
+          className={styles.input}
         />
-      </Field>
-      <Field label="End Date" className={styles.field}>
+      </div>
+      <div className={styles.row}>
+        <span className={styles.label}>To</span>
         <Input
           type="date"
           value={endDate}
           onChange={(e) => onEndDateChange(e.target.value)}
           disabled={disabled}
+          size="small"
+          className={styles.input}
         />
-      </Field>
+      </div>
     </div>
   );
 };

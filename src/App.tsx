@@ -5,17 +5,12 @@ import {
   makeStyles,
   tokens,
   Button,
-  Title1,
-  Title3,
   Text,
   Card,
-  CardHeader,
   Checkbox,
   MessageBar,
   MessageBarBody,
-  MessageBarTitle,
   Spinner,
-  Field,
   Dropdown,
   Option,
 } from '@fluentui/react-components';
@@ -25,7 +20,6 @@ import {
   Person24Regular,
   SignOut24Regular,
   BrainCircuit24Regular,
-  People24Regular,
 } from '@fluentui/react-icons';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from './services/authConfig';
@@ -41,64 +35,71 @@ import { AgentActivityLog } from './components/AgentActivityLog';
 const useStyles = makeStyles({
   root: {
     minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-    paddingTop: tokens.spacingVerticalXXL,
-    paddingBottom: tokens.spacingVerticalXXL,
+    backgroundColor: tokens.colorNeutralBackground2,
+    padding: tokens.spacingVerticalM,
   },
   container: {
-    maxWidth: '560px',
-    margin: '0 auto',
-    padding: tokens.spacingHorizontalL,
+    width: '100%',
+    maxWidth: '100%',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: tokens.spacingVerticalXL,
-    paddingBottom: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalM,
+    paddingBottom: tokens.spacingVerticalS,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.spacingHorizontalM,
+    gap: tokens.spacingHorizontalS,
   },
   headerIcon: {
-    fontSize: '28px',
+    fontSize: '20px',
     color: tokens.colorBrandForeground1,
   },
   headerRight: {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.spacingHorizontalS,
+    gap: tokens.spacingHorizontalXS,
+  },
+  section: {
+    marginBottom: tokens.spacingVerticalM,
+  },
+  sectionTitle: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    marginBottom: tokens.spacingVerticalS,
+    color: tokens.colorNeutralForeground1,
   },
   card: {
-    marginBottom: tokens.spacingVerticalM,
-    boxShadow: tokens.shadow4,
-    borderRadius: tokens.borderRadiusLarge,
+    marginBottom: tokens.spacingVerticalS,
+    boxShadow: tokens.shadow2,
+    borderRadius: tokens.borderRadiusMedium,
   },
   cardContent: {
-    padding: tokens.spacingHorizontalL,
-    paddingTop: tokens.spacingVerticalS,
+    padding: tokens.spacingHorizontalM,
+    paddingTop: tokens.spacingVerticalXS,
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalM,
+    gap: tokens.spacingVerticalS,
   },
   options: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalM,
+    gap: tokens.spacingVerticalS,
   },
   actions: {
     display: 'flex',
     gap: tokens.spacingHorizontalS,
-    marginTop: tokens.spacingVerticalM,
+    marginTop: tokens.spacingVerticalS,
   },
   statusBar: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: tokens.spacingHorizontalM,
+    padding: tokens.spacingHorizontalS,
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusMedium,
     marginBottom: tokens.spacingVerticalM,
@@ -107,15 +108,36 @@ const useStyles = makeStyles({
   userInfo: {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.spacingHorizontalS,
+    gap: tokens.spacingHorizontalXS,
+    overflow: 'hidden',
+    flex: 1,
+    minWidth: 0,
+  },
+  userText: {
+    overflow: 'hidden',
+    minWidth: 0,
+  },
+  userName: {
+    display: 'block',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  userEmail: {
+    display: 'block',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    color: tokens.colorNeutralForeground3,
   },
   llmStatus: {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.spacingHorizontalXS,
-    fontSize: tokens.fontSizeBase200,
-    padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalS}`,
+    gap: tokens.spacingHorizontalXXS,
+    fontSize: tokens.fontSizeBase100,
+    padding: `2px ${tokens.spacingHorizontalXS}`,
     borderRadius: tokens.borderRadiusMedium,
+    flexShrink: 0,
   },
   llmConfigured: {
     color: tokens.colorPaletteGreenForeground1,
@@ -127,22 +149,24 @@ const useStyles = makeStyles({
   },
   generateButton: {
     width: '100%',
-    height: '44px',
-    fontSize: tokens.fontSizeBase400,
+    height: '40px',
   },
   welcomeCard: {
     textAlign: 'center',
-    padding: tokens.spacingVerticalXXL,
+    padding: tokens.spacingVerticalL,
   },
   welcomeIcon: {
-    fontSize: '48px',
+    fontSize: '36px',
     color: tokens.colorBrandForeground1,
-    marginBottom: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalS,
   },
   hint: {
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXS,
+  },
+  compactField: {
+    marginBottom: tokens.spacingVerticalXS,
   },
 });
 
@@ -261,10 +285,7 @@ export const App: React.FC = () => {
           <div className={styles.header}>
             <div className={styles.headerLeft}>
               <CalendarMonth24Regular className={styles.headerIcon} />
-              <div>
-                <Title1>Calendar Report</Title1>
-                <Text size={200} style={{ color: '#666' }}>Generate meeting reports with AI</Text>
-              </div>
+              <Text weight="semibold" size={400}>Calendar Report</Text>
             </div>
             <div className={styles.headerRight}>
               <SettingsPanel onSave={handleSettingsSaved} />
@@ -273,6 +294,7 @@ export const App: React.FC = () => {
                   appearance="subtle"
                   icon={<SignOut24Regular />}
                   onClick={handleLogout}
+                  size="small"
                   aria-label="Sign out"
                 />
               )}
@@ -284,15 +306,14 @@ export const App: React.FC = () => {
             <Card className={styles.card}>
               <div className={styles.welcomeCard}>
                 <CalendarMonth24Regular className={styles.welcomeIcon} />
-                <Title3>Welcome to Calendar Report</Title3>
-                <Text style={{ display: 'block', marginTop: 8, marginBottom: 24, color: '#666' }}>
-                  Generate detailed meeting reports from your Outlook calendar with AI-powered analysis
+                <Text weight="semibold" size={400} block>Welcome</Text>
+                <Text size={200} style={{ display: 'block', marginTop: 4, marginBottom: 16, color: '#666' }}>
+                  Generate meeting reports with AI analysis
                 </Text>
                 <Button
                   appearance="primary"
                   icon={<Person24Regular />}
                   onClick={handleLogin}
-                  size="large"
                 >
                   Sign in with Microsoft
                 </Button>
@@ -306,123 +327,109 @@ export const App: React.FC = () => {
               {/* Status Bar */}
               <div className={styles.statusBar}>
                 <div className={styles.userInfo}>
-                  <Person24Regular />
-                  <div>
-                    <Text weight="semibold">{account?.name}</Text>
-                    <Text size={200} style={{ display: 'block', color: '#666' }}>{account?.username}</Text>
+                  <Person24Regular style={{ flexShrink: 0 }} />
+                  <div className={styles.userText}>
+                    <Text weight="semibold" size={200} className={styles.userName}>{account?.name}</Text>
+                    <Text size={100} className={styles.userEmail}>{account?.username}</Text>
                   </div>
                 </div>
                 <div className={`${styles.llmStatus} ${llmReady ? styles.llmConfigured : styles.llmNotConfigured}`}>
-                  <BrainCircuit24Regular />
-                  {llmReady ? 'AI Ready' : 'AI Off'}
+                  <BrainCircuit24Regular style={{ fontSize: '14px' }} />
+                  <span>{llmReady ? 'AI' : 'Off'}</span>
                 </div>
               </div>
 
               {/* Target User */}
-              <Card className={styles.card}>
-                <CardHeader
-                  header={<Title3>Target User</Title3>}
-                  description="Select whose calendar to generate report for"
-                />
-                <div className={styles.cardContent}>
-                  <Field>
-                    <Dropdown
-                      placeholder={loadingUsers ? "Loading users..." : "Select user (default: yourself)"}
-                      value={targetUser ? availableUsers.find(u => u.email === targetUser)?.name || targetUser : "My Calendar"}
-                      selectedOptions={[targetUser || '']}
-                      onOptionSelect={(_, data) => setTargetUser(data.optionValue || '')}
-                      disabled={isLoading || loadingUsers}
-                    >
-                      <Option key="" value="" text="My Calendar">
-                        <People24Regular style={{ marginRight: 8 }} />
-                        My Calendar (myself)
-                      </Option>
-                      {availableUsers.map(user => (
-                        <Option key={user.email} value={user.email} text={user.name}>
-                          <People24Regular style={{ marginRight: 8 }} />
-                          {user.name} ({user.email})
-                        </Option>
-                      ))}
-                    </Dropdown>
-                  </Field>
-                  {availableUsers.length === 0 && !loadingUsers && (
-                    <Text size={200} style={{ color: '#666' }}>
-                      No shared calendars found. Ask others to share their calendar with you.
-                    </Text>
-                  )}
-                </div>
-              </Card>
+              <div className={styles.section}>
+                <Text className={styles.sectionTitle}>Calendar</Text>
+                <Dropdown
+                  placeholder={loadingUsers ? "Loading..." : "Select calendar"}
+                  value={targetUser ? availableUsers.find(u => u.email === targetUser)?.name || targetUser : "My Calendar"}
+                  selectedOptions={[targetUser || '']}
+                  onOptionSelect={(_, data) => setTargetUser(data.optionValue || '')}
+                  disabled={isLoading || loadingUsers}
+                  size="small"
+                  style={{ width: '100%' }}
+                >
+                  <Option key="" value="" text="My Calendar">
+                    My Calendar
+                  </Option>
+                  {availableUsers.map(user => (
+                    <Option key={user.email} value={user.email} text={user.name}>
+                      {user.name}
+                    </Option>
+                  ))}
+                </Dropdown>
+                {availableUsers.length === 0 && !loadingUsers && (
+                  <Text size={100} style={{ color: '#888', marginTop: 4, display: 'block' }}>
+                    No shared calendars found
+                  </Text>
+                )}
+              </div>
 
               {/* Date Range */}
-              <Card className={styles.card}>
-                <CardHeader header={<Title3>Date Range</Title3>} />
-                <div className={styles.cardContent}>
-                  <DateRangePicker
-                    startDate={startDate}
-                    endDate={endDate}
-                    onStartDateChange={setStartDate}
-                    onEndDateChange={setEndDate}
-                    disabled={isLoading}
-                  />
-                </div>
-              </Card>
+              <div className={styles.section}>
+                <Text className={styles.sectionTitle}>Date Range</Text>
+                <DateRangePicker
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                  disabled={isLoading}
+                />
+              </div>
 
               {/* Options */}
-              <Card className={styles.card}>
-                <CardHeader header={<Title3>Report Options</Title3>} />
-                <div className={styles.cardContent}>
-                  <div className={styles.options}>
-                    <Checkbox
-                      checked={includeAnalysis}
-                      onChange={(_, data) => setIncludeAnalysis(data.checked === true)}
-                      label="Include AI analysis (summaries, categories, action items)"
-                      disabled={isLoading || !llmReady}
-                    />
-                    <Checkbox
-                      checked={includeExecutiveSummary}
-                      onChange={(_, data) => setIncludeExecutiveSummary(data.checked === true)}
-                      label="Include executive summary"
-                      disabled={isLoading || !llmReady || !includeAnalysis}
-                    />
-                  </div>
-
-                  <Button
-                    appearance="primary"
-                    icon={isLoading ? <Spinner size="tiny" /> : <ArrowDownload24Regular />}
-                    onClick={handleGenerateReport}
-                    disabled={isLoading}
-                    className={styles.generateButton}
-                  >
-                    {isLoading ? 'Generating Report...' : 'Generate Report'}
-                  </Button>
+              <div className={styles.section}>
+                <Text className={styles.sectionTitle}>Options</Text>
+                <div className={styles.options}>
+                  <Checkbox
+                    checked={includeAnalysis}
+                    onChange={(_, data) => setIncludeAnalysis(data.checked === true)}
+                    label="AI analysis"
+                    disabled={isLoading || !llmReady}
+                  />
+                  <Checkbox
+                    checked={includeExecutiveSummary}
+                    onChange={(_, data) => setIncludeExecutiveSummary(data.checked === true)}
+                    label="Executive summary"
+                    disabled={isLoading || !llmReady || !includeAnalysis}
+                  />
                 </div>
-              </Card>
+              </div>
+
+              {/* Generate Button */}
+              <Button
+                appearance="primary"
+                icon={isLoading ? <Spinner size="tiny" /> : <ArrowDownload24Regular />}
+                onClick={handleGenerateReport}
+                disabled={isLoading}
+                className={styles.generateButton}
+              >
+                {isLoading ? 'Generating...' : 'Generate Report'}
+              </Button>
 
               {/* Agent Activity */}
               {(events.length > 0 || isLoading) && (
-                <Card className={styles.card}>
-                  <CardHeader header={<Title3>Agent Activity</Title3>} />
-                  <div className={styles.cardContent}>
-                    <AgentActivityLog events={events} isRunning={isLoading} />
-                  </div>
-                </Card>
+                <div className={styles.section} style={{ marginTop: tokens.spacingVerticalM }}>
+                  <Text className={styles.sectionTitle}>Activity</Text>
+                  <AgentActivityLog events={events} isRunning={isLoading} />
+                </div>
               )}
 
               {/* Messages */}
               {error && (
-                <MessageBar intent="error" style={{ marginTop: tokens.spacingVerticalM }}>
+                <MessageBar intent="error" style={{ marginTop: tokens.spacingVerticalS }}>
                   <MessageBarBody>
-                    <MessageBarTitle>Error</MessageBarTitle>
-                    {error}
+                    <Text size={200}>{error}</Text>
                   </MessageBarBody>
                 </MessageBar>
               )}
 
               {success && (
-                <MessageBar intent="success" style={{ marginTop: tokens.spacingVerticalM }}>
+                <MessageBar intent="success" style={{ marginTop: tokens.spacingVerticalS }}>
                   <MessageBarBody>
-                    <MessageBarTitle>Success</MessageBarTitle>
-                    {success}
+                    <Text size={200}>{success}</Text>
                   </MessageBarBody>
                 </MessageBar>
               )}
