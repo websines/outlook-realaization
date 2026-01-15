@@ -25,7 +25,7 @@ import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from './services/authConfig';
 import { isLLMConfigured } from './services/llmService';
 import { getSharedCalendarOwners } from './services/graphService';
-import { AgentOrchestrator } from './agents';
+import { AgentOrchestrator, lastReportDownload } from './agents';
 import type { AgentEvent } from './types/AgentTypes';
 
 import { DateRangePicker } from './components/DateRangePicker';
@@ -339,12 +339,15 @@ export const App: React.FC = () => {
       });
 
       console.log('Full orchestrator result:', JSON.stringify(result, null, 2));
+      console.log('Global lastReportDownload:', lastReportDownload);
       if (result.success) {
-        const fname = result.filename || 'meeting-report.xlsx';
-        console.log('downloadUrl from result:', result.downloadUrl);
+        // Try to get download URL from result, fall back to global
+        const dlUrl = result.downloadUrl || lastReportDownload?.url;
+        const fname = result.filename || lastReportDownload?.filename || 'meeting-report.xlsx';
+        console.log('Final downloadUrl:', dlUrl);
         setSuccess(`Report generated successfully!`);
-        if (result.downloadUrl) {
-          setDownloadUrl(result.downloadUrl);
+        if (dlUrl) {
+          setDownloadUrl(dlUrl);
           setDownloadFilename(fname);
         }
       } else {

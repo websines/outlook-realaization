@@ -5,6 +5,9 @@ import type { MeetingAnalysis } from '../types/LLMTypes';
 import { transformEventsToReportRows, generateFilename } from '../services/excelService';
 import { extractCompanyFromEmail } from '../utils/domainExtractor';
 
+// Global storage for the last generated report download
+export let lastReportDownload: { url: string; filename: string } | null = null;
+
 const REPORT_TOOLS: Tool[] = [
   {
     name: 'generate_excel_report',
@@ -239,7 +242,8 @@ export class ReportAgent extends BaseAgent {
         console.error('Auto-download failed:', e);
       }
 
-      // Store blob URL in context for manual download fallback
+      // Store blob URL globally for manual download fallback
+      lastReportDownload = { url: blobUrl, filename };
       this.context.downloadUrl = blobUrl;
       this.context.downloadFilename = filename;
 
