@@ -338,8 +338,10 @@ export const App: React.FC = () => {
         includeExecutiveSummary: includeExecutiveSummary && isLLMConfigured(),
       });
 
+      console.log('Full orchestrator result:', JSON.stringify(result, null, 2));
       if (result.success) {
         const fname = result.filename || 'meeting-report.xlsx';
+        console.log('downloadUrl from result:', result.downloadUrl);
         setSuccess(`Report generated successfully!`);
         if (result.downloadUrl) {
           setDownloadUrl(result.downloadUrl);
@@ -519,20 +521,25 @@ export const App: React.FC = () => {
               {success && (
                 <MessageBar intent="success" style={{ marginTop: tokens.spacingVerticalS }}>
                   <MessageBarBody>
-                    <Text size={200}>{success}</Text>
-                    {downloadUrl && (
-                      <Button
-                        as="a"
-                        href={downloadUrl}
-                        download={downloadFilename || 'meeting-report.xlsx'}
-                        appearance="primary"
-                        icon={<ArrowDownload24Regular />}
-                        size="small"
-                        style={{ marginLeft: tokens.spacingHorizontalM, marginTop: tokens.spacingVerticalXS }}
-                      >
-                        Download Report
-                      </Button>
-                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <Text size={200}>{success}</Text>
+                      {downloadUrl ? (
+                        <Button
+                          as="a"
+                          href={downloadUrl}
+                          download={downloadFilename || 'meeting-report.xlsx'}
+                          appearance="primary"
+                          icon={<ArrowDownload24Regular />}
+                          size="small"
+                        >
+                          Download Report
+                        </Button>
+                      ) : (
+                        <Text size={100} style={{ color: '#666' }}>
+                          (File should have downloaded automatically. Check your downloads folder.)
+                        </Text>
+                      )}
+                    </div>
                   </MessageBarBody>
                 </MessageBar>
               )}

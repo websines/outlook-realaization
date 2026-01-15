@@ -167,7 +167,13 @@ export class AgentOrchestrator {
 
       this.emit('complete', 'Report generated successfully!');
 
+      // Debug: log what we're getting back
+      console.log('Report result data:', reportResult.data);
+
       const reportData = reportResult.data as { downloadFilename?: string; downloadUrl?: string };
+      console.log('Download URL:', reportData?.downloadUrl);
+      console.log('Download filename:', reportData?.downloadFilename);
+
       return {
         success: true,
         message: `Report generated with ${meetings.length} meetings`,
